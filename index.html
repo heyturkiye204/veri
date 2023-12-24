@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>kara vezir Status</title>
+  <title>Discord Status</title>
 </head>
 <body>
 
-<div id="root"></div>
+<p id="status">Yükleniyor...</p>
 
 <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
 <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
@@ -50,19 +50,19 @@
     const { data, error } = useDiscordStatus();
 
     if (error) {
-      document.getElementById('root').innerHTML = '<div>Hata: ' + error.message + '</div>';
+      document.getElementById('status').innerText = 'Hata: ' + error.message;
       return;
     }
 
     if (!data) {
-      document.getElementById('root').innerHTML = '<div>Yükleniyor...</div>';
+      document.getElementById('status').innerText = 'Yükleniyor...';
       return;
     }
 
     const userStatus = data?.data?.discord_status;
     const statusText = getStatusText(userStatus);
 
-    document.getElementById('root').innerHTML = '<p>Discord Kullanıcı Durumu: ' + statusText + '</p>';
+    document.getElementById('status').innerText = 'Discord Kullanıcı Durumu: ' + statusText;
   };
 
   window.MyComponent = MyComponent;
