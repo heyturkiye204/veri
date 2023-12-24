@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Discord Status</title>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/swr@0.5.6/dist/index.js"></script>
+
+<script>
+  const discordId = '718374283642011728';
+
+  const useDiscordStatus = () => {
+    const url = `https://api.lanyard.rest/v1/users/${discordId}`;
+
+    return window.useSWR(url, async (href) => {
+      const response = await window.axios.get(href);
+
+      if (response.status !== 200) {
+        throw new Error('Discord kullanıcı durumu alınamadı.');
+      }
+
+      return response.data;
+    });
+  };
+
+  const getStatusText = (status) => {
+    switch (status) {
+      case 'offline':
+        return 'Çevrimdışı';
+      case 'idle':
+        return 'Boşta';
+      case 'online':
+        return 'Çevrimiçi';
+      case 'dnd':
+        return 'Rahatsız Etmeyin';
+      default:
+        return 'Bilinmeyen Durum';
+    }
+  };
+
+  const MyComponent = () => {
+    const { data, error } = useDiscordStatus();
+
+    if (error) {
+      document.getElementById('root').innerHTML = '<div>Hata: ' + error.message + '</div>';
+      return;
+    }
+
+    if (!data) {
+      document.getElementById('root').innerHTML = '<div>Yükleniyor...</div>';
+      return;
+    }
+
+    const userStatus = data?.data?.discord_status;
+    const statusText = getStatusText(userStatus);
+
+    document.getElementById('root').innerHTML = '<p>Discord Kullanıcı Durumu: ' + statusText + '</p>';
+  };
+
+  window.MyComponent = MyComponent;
+  window.React = React; // Bu satırın eklenmesi, React Developer Tools'un kullanılabilir olmasını sağlar.
+  window.ReactDOM = ReactDOM; // Bu satırın eklenmesi, React Developer Tools'un kullanılabilir olmasını sağlar.
+</script>
+
+<script>
+  ReactDOM.render(React.createElement(MyComponent), document.getElementById('root'));
+</script>
+
+</body>
+</html>
