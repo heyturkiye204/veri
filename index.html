@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Discord Status</title>
+  <title>Discord Statahus</title>
 </head>
 <body>
 
@@ -24,7 +24,7 @@
       const response = await window.axios.get(href);
 
       if (response.status !== 200) {
-        throw new Error('Discord kullanıcı durumu alınamadı.');
+        console.error('Discord kullanıcı durumu alınamadı. Status:', response.status);
       }
 
       return response.data;
@@ -47,12 +47,7 @@
   };
 
   const MyComponent = () => {
-    const { data, error } = useDiscordStatus();
-
-    if (error) {
-      document.getElementById('status').innerText = 'Hata: ' + error.message;
-      return;
-    }
+    const { data } = useDiscordStatus();
 
     if (!data) {
       document.getElementById('status').innerText = 'Yükleniyor...';
@@ -60,8 +55,14 @@
     }
 
     const userStatus = data?.data?.discord_status;
-    const statusText = getStatusText(userStatus);
 
+    if (userStatus === undefined) {
+      console.error('Discord kullanıcı durumu bulunamadı.');
+      document.getElementById('status').innerText = 'Durum bulunamadı.';
+      return;
+    }
+
+    const statusText = getStatusText(userStatus);
     document.getElementById('status').innerText = 'Discord Kullanıcı Durumu: ' + statusText;
   };
 
